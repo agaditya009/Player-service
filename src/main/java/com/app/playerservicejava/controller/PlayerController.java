@@ -20,8 +20,11 @@ public class PlayerController {
     private PlayerService playerService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Players> getPlayers() {
-        Players players = playerService.getPlayers();
+    public ResponseEntity<Players> getPlayers(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size
+    ) {
+        Players players = playerService.getPlayers(page, size);
         return ok(players);
     }
 

@@ -6,6 +6,9 @@ import com.app.playerservicejava.repository.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,10 +20,22 @@ public class PlayerService {
     @Autowired
     private PlayerRepository playerRepository;
 
-    public Players getPlayers() {
+    public Players getPlayers(int page, int size) {
+        int sanitizedPage = Math.max(page, 0);
+        int sanitizedSize = size > 0 ? size : 10;
+
+        Pageable pageable = PageRequest.of(sanitizedPage, sanitizedSize);
+        Page<Player> playerPage = playerRepository.findAll(pageable);
+
         Players players = new Players();
-        playerRepository.findAll()
-                .forEach(players.getPlayers()::add);
+        players.setPlayers(playerPage.getContent());
+
+        Players.PageMetadata metadata = new Players.PageMetadata();
+        metadata.setTotalElements(playerPage.getTotalElements());
+        metadata.setTotalPages(playerPage.getTotalPages());
+        metadata.setPage(playerPage.getNumber());
+        metadata.setSize(playerPage.getSize());
+        players.setMetadata(metadata);
         return players;
     }
 
