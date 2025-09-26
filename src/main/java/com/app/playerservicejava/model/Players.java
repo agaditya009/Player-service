@@ -1,78 +1,40 @@
 package com.app.playerservicejava.model;
 
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class Players implements Serializable {
-    private List<Player> players;
-    private PageMetadata metadata;
+    private final List<Player> players;
+    private final PageMetadata metadata;
 
     public Players() {
-        this(new ArrayList<>(), new PageMetadata());
+        this(Collections.emptyList(), PageMetadata.empty());
     }
 
-    public Players(List<Player> players, PageMetadata metadata) {
-        this.players = players == null ? new ArrayList<>() : new ArrayList<>(players);
-        this.metadata = metadata == null ? new PageMetadata() : metadata;
+    @JsonCreator
+    public Players(
+            @JsonProperty("players") List<Player> players,
+            @JsonProperty("metadata") PageMetadata metadata
+    ) {
+        List<Player> safePlayers = players == null ? Collections.emptyList() : new ArrayList<>(players);
+        this.players = Collections.unmodifiableList(safePlayers);
+        this.metadata = metadata == null ? PageMetadata.empty() : metadata;
+    }
+
+    public static Players of(List<Player> players, PageMetadata metadata) {
+        return new Players(players, metadata);
     }
 
     public List<Player> getPlayers() {
-        return Collections.unmodifiableList(players);
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players == null ? new ArrayList<>() : new ArrayList<>(players);
+        return players;
     }
 
     public PageMetadata getMetadata() {
         return metadata;
-    }
-
-    public void setMetadata(PageMetadata metadata) {
-        this.metadata = Objects.requireNonNullElseGet(metadata, PageMetadata::new);
-    }
-
-    public static class PageMetadata implements Serializable {
-        private long totalElements;
-        private int totalPages;
-        private int page;
-        private int size;
-
-        public long getTotalElements() {
-            return totalElements;
-        }
-
-        public void setTotalElements(long totalElements) {
-            this.totalElements = totalElements;
-        }
-
-        public int getTotalPages() {
-            return totalPages;
-        }
-
-        public void setTotalPages(int totalPages) {
-            this.totalPages = totalPages;
-        }
-
-        public int getPage() {
-            return page;
-        }
-
-        public void setPage(int page) {
-            this.page = page;
-        }
-
-        public int getSize() {
-            return size;
-        }
-
-        public void setSize(int size) {
-            this.size = size;
-        }
     }
 }
