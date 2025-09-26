@@ -6,6 +6,9 @@ import com.app.playerservicejava.repository.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,9 +20,9 @@ public class PlayerService {
     @Autowired
     private PlayerRepository playerRepository;
 
-    public Players getPlayers() {
+    public Players getPlayers(Pageable pageable) {
         Players players = new Players();
-        playerRepository.findAll()
+        playerRepository.findAll(pageable == null ? Pageable.unpaged() : pageable)
                 .forEach(players.getPlayers()::add);
         return players;
     }
