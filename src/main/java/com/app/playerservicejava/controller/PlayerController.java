@@ -1,9 +1,9 @@
 package com.app.playerservicejava.controller;
 
 import com.app.playerservicejava.model.Player;
-import com.app.playerservicejava.model.Players;
 import com.app.playerservicejava.service.PlayerService;
 import jakarta.annotation.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +20,10 @@ public class PlayerController {
     private PlayerService playerService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Players> getPlayers() {
-        Players players = playerService.getPlayers();
+    public ResponseEntity<Page<Player>> getPlayers(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size) {
+        Page<Player> players = playerService.getPlayers(page, size);
         return ok(players);
     }
 

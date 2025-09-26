@@ -1,8 +1,9 @@
 package com.app.playerservicejava.service;
 
 import com.app.playerservicejava.model.Player;
-import com.app.playerservicejava.model.Players;
 import com.app.playerservicejava.repository.PlayerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,9 @@ public class PlayerService {
     @Autowired
     private PlayerRepository playerRepository;
 
-    public Players getPlayers() {
-        Players players = new Players();
-        playerRepository.findAll()
-                .forEach(players.getPlayers()::add);
-        return players;
+    public Page<Player> getPlayers(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return playerRepository.findAll(pageRequest);
     }
 
     public Optional<Player> getPlayerById(String playerId) {
