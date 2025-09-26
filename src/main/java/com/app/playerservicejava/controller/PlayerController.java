@@ -20,8 +20,10 @@ public class PlayerController {
     private PlayerService playerService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Players> getPlayers() {
-        Players players = playerService.getPlayers();
+    public ResponseEntity<Players> getPlayers(
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
+        Players players = playerService.getPlayers(sortBy, direction);
         return ok(players);
     }
 
